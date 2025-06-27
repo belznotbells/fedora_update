@@ -1,7 +1,7 @@
 ---
 - name: Update Fedora 41 system using DNF
   hosts: 192.168.1.149
-  become: true
+  become: false
   tasks:
     - name: Update all packages to the latest version
       ansible.builtin.dnf:
