@@ -1,0 +1,22 @@
+---
+- name: Update Fedora 41 system using DNF
+  become: true
+  tasks:
+    - name: Update all packages to the latest version
+      ansible.builtin.dnf:
+        name: '*'
+        state: latest
+        update_cache: yes
+      register: dnf_result
+
+    - name: Check if kernel was updated
+      set_fact:
+        reboot_required: true
+      when: "'kernel' in dnf_result.changes or 'kernel-core' in dnf_result.changes"
+
+    - name: Reboot if needed
+      ansible.builtin.reboot:
+        msg: "Rebooting after kernel update"
+        pre_reboot_delay: 10
+      when: reboot_required | default(false)
+
